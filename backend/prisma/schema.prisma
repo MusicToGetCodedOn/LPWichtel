@@ -1,0 +1,40 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum GroupStatus {
+  OPEN
+  DRAWN
+}
+
+model Group {
+  id           String        @id @default(cuid())
+  name         String
+  budget       String?
+  eventDate    DateTime?
+  inviteCode   String        @unique
+  adminToken   String        @unique
+  status       GroupStatus   @default(OPEN)
+  createdAt    DateTime      @default(now())
+  participants Participant[]
+}
+
+model Participant {
+  id           String       @id @default(cuid())
+  name         String
+  token        String       @unique
+  username     String?      @unique
+  passwordHash String?
+  wishes       String?
+  groupId      String
+  group        Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  assignedToId String?      @unique
+  assignedTo   Participant? @relation("SecretSantaRelation", fields: [assignedToId], references: [id])
+  drawnBy      Participant? @relation("SecretSantaRelation")
+  createdAt    DateTime     @default(now())
+}

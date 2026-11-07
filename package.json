@@ -1,0 +1,5 @@
+{
+  "name": "wichtelapp",
+  "private": true,
+  "workspaces": ["frontend", "backend"]
+}
